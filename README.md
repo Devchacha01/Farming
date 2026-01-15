@@ -29,7 +29,7 @@ A comprehensive farming system for RedM RSG-Core, allowing you to plant, water, 
 - `oxmysql`
 
 ## Installation
-
+first rename the folder to rsg-farming
 ### 1. Download & Place
 - Download the resource and place it in your `resources` folder.
 - Rename the folder to `rsg-farming`.
