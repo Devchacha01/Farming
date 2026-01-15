@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS `rsg_farming` (
   `citizenid` varchar(50) DEFAULT NULL,
   `plantname` varchar(50) DEFAULT NULL,
   `data` longtext DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  KEY `citizenid` (`citizenid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

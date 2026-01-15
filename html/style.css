@@ -41,82 +41,51 @@ body {
 }
 
 .menu-container {
-    background: linear-gradient(180deg,
-            rgba(45, 32, 20, 0.97) 0%,
-            rgba(35, 25, 15, 0.98) 50%,
-            rgba(25, 18, 10, 0.99) 100%);
-    border: 4px solid #8B4513;
-    border-radius: 8px;
-    padding: 30px 40px;
-    min-width: 420px;
-    max-width: 500px;
+    /* Background ID: Light-Leafy */
+    background-image: url('bg_farming.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
+    background-color: transparent !important;
+
+    /* Box Dimensions - Increased Size */
+    width: 540px;
+    height: 720px;
+
+    /* Padding to clear the leafy frame (Top/Right/Bottom/Left) */
+    padding: 120px 95px 90px 95px;
+
+    /* Layout */
+    display: flex;
+    flex-direction: column;
     position: relative;
-    box-shadow:
-        0 0 0 2px #5C3317,
-        0 0 0 6px rgba(139, 69, 19, 0.3),
-        0 20px 60px rgba(0, 0, 0, 0.9),
-        inset 0 0 80px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
-/* Decorative corners */
 .menu-container::before,
-.menu-container::after {
-    content: '⚜';
-    position: absolute;
-    font-size: 24px;
-    color: #C4A35A;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.menu-container::before {
-    top: 8px;
-    left: 12px;
-}
-
-.menu-container::after {
-    top: 8px;
-    right: 12px;
-}
-
-/* Side borders */
+.menu-container::after,
 .menu-border-left,
 .menu-border-right {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 8px;
-    height: 60%;
-    background: linear-gradient(180deg,
-            transparent 0%,
-            #8B4513 20%,
-            #C4A35A 50%,
-            #8B4513 80%,
-            transparent 100%);
-    border-radius: 4px;
-}
-
-.menu-border-left {
-    left: -4px;
-}
-
-.menu-border-right {
-    right: -4px;
+    display: none;
 }
 
 /* Header */
 .menu-header {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
     margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid rgba(196, 163, 90, 0.4);
+    padding-bottom: 15px;
+    border-bottom: 2px solid #3d5a2c;
+    /* Dark Green Divider */
     position: relative;
 }
 
 .plant-icon {
     font-size: 50px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    color: #2d4a1c;
 }
 
 .header-info {
@@ -125,43 +94,46 @@ body {
 
 .header-info h1 {
     font-family: 'Rye', cursive;
-    color: #C4A35A;
-    font-size: 26px;
+    color: #1b330a;
+    /* Very Dark Green */
+    font-size: 32px;
     font-weight: 400;
-    text-shadow:
-        2px 2px 4px rgba(0, 0, 0, 0.8),
-        0 0 20px rgba(196, 163, 90, 0.3);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
     letter-spacing: 2px;
+    margin: 0;
 }
 
 .plant-type {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 16px;
-    margin-top: 5px;
+    color: #3d5a2c;
+    /* Forest Green */
+    font-size: 15px;
+    margin-top: 4px;
     text-transform: uppercase;
     letter-spacing: 3px;
+    font-weight: 700;
 }
 
 .close-btn {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background: linear-gradient(135deg, #8B0000, #5C0000);
-    border: 2px solid #C4A35A;
-    color: #C4A35A;
-    width: 36px;
-    height: 36px;
+    top: -10px;
+    right: -10px;
+    background: #8B0000;
+    border: 2px solid #2d4a1c;
+    color: #fff;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .close-btn:hover {
-    background: linear-gradient(135deg, #AA0000, #8B0000);
+    background: #a00000;
     transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(139, 0, 0, 0.6);
 }
 
 /* Progress Section */
@@ -169,34 +141,31 @@ body {
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 15px;
 }
 
 .progress-item {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
 }
 
 .progress-header {
     display: flex;
     justify-content: space-between;
-    color: #C4A35A;
+    color: #1b330a;
+    /* Dark Green */
     font-size: 15px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    font-weight: 700;
 }
 
 .progress-bar {
     height: 18px;
-    background: linear-gradient(180deg,
-            rgba(0, 0, 0, 0.6) 0%,
-            rgba(30, 20, 10, 0.8) 100%);
+    background: rgba(255, 255, 255, 0.6);
     border-radius: 4px;
     overflow: hidden;
-    border: 2px solid #5C3317;
-    box-shadow:
-        inset 0 3px 6px rgba(0, 0, 0, 0.5),
-        0 1px 0 rgba(196, 163, 90, 0.2);
+    border: 1px solid #3d5a2c;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .progress-fill {
@@ -204,106 +173,92 @@ body {
     border-radius: 2px;
     transition: width 0.5s ease;
     position: relative;
+    /* Glass shine */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-.progress-fill::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 50%;
-    background: linear-gradient(180deg,
-            rgba(255, 255, 255, 0.3) 0%,
-            transparent 100%);
-}
-
+/* Gradient Adjustments */
 .progress-fill.water {
-    background: linear-gradient(90deg, #1E90FF, #4169E1);
-    box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+    background: linear-gradient(180deg, #4FC3F7, #0288D1);
 }
 
 .progress-fill.growth {
-    background: linear-gradient(90deg, #228B22, #32CD32);
-    box-shadow: 0 0 10px rgba(34, 139, 34, 0.5);
+    background: linear-gradient(180deg, #81C784, #388E3C);
 }
 
 .progress-fill.health {
-    background: linear-gradient(90deg, #8B0000, #FF0000);
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    background: linear-gradient(180deg, #E57373, #D32F2F);
 }
 
 .progress-fill.weeds {
-    background: linear-gradient(90deg, #556B2F, #808000);
-    box-shadow: 0 0 10px rgba(85, 107, 47, 0.5);
+    background: linear-gradient(180deg, #D4E157, #9E9D24);
 }
 
 /* Info Section */
 .info-section {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 15px;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 12px 15px;
     margin-bottom: 20px;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(61, 90, 44, 0.15);
+    /* Green Tint */
     border-radius: 6px;
-    border: 1px solid rgba(196, 163, 90, 0.3);
+    border: 1px dashed #3d5a2c;
 }
 
 .info-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 15px;
+    gap: 10px;
+    font-size: 14px;
 }
 
 .info-icon {
-    font-size: 20px;
+    font-size: 18px;
+    color: #2d4a1c;
 }
 
 .info-label {
-    color: rgba(255, 255, 255, 0.6);
+    color: #3d5a2c;
+    font-weight: 700;
 }
 
 .info-value {
-    color: #C4A35A;
-    font-weight: bold;
-    margin-left: auto;
+    color: #1b330a;
+    font-weight: 800;
 }
 
 /* Actions Grid */
 .actions-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 15px;
 }
 
 .action-btn {
-    background: linear-gradient(180deg,
-            rgba(92, 51, 23, 0.8) 0%,
-            rgba(60, 35, 15, 0.9) 100%);
-    border: 2px solid #8B4513;
+    background: linear-gradient(180deg, #4a6633 0%, #2d4a1c 100%);
+    border: 1px solid #1b330a;
     border-radius: 6px;
-    padding: 15px;
-    color: #C4A35A;
+    padding: 14px;
+    color: #f1f8e9;
     font-size: 14px;
     font-family: 'IM Fell English SC', serif;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .action-btn:hover {
-    background: linear-gradient(180deg,
-            rgba(139, 69, 19, 0.9) 0%,
-            rgba(92, 51, 23, 0.95) 100%);
-    border-color: #C4A35A;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .action-btn:active {
@@ -311,45 +266,42 @@ body {
 }
 
 .action-btn .icon {
-    font-size: 22px;
+    font-size: 20px;
 }
 
 .action-btn.disabled {
-    opacity: 0.4;
+    opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
 }
 
 .action-btn.harvest {
-    background: linear-gradient(180deg,
-            rgba(34, 139, 34, 0.8) 0%,
-            rgba(20, 80, 20, 0.9) 100%);
-    border-color: #228B22;
+    border-color: #2e7d32;
 }
 
 .action-btn.harvest:hover {
     background: linear-gradient(180deg,
-            rgba(50, 205, 50, 0.8) 0%,
-            rgba(34, 139, 34, 0.9) 100%);
-    border-color: #32CD32;
+            #66bb6a 0%,
+            #2e7d32 100%);
+    border-color: #81c784;
 }
 
 .action-btn.destroy {
     background: linear-gradient(180deg,
-            rgba(139, 0, 0, 0.8) 0%,
-            rgba(80, 0, 0, 0.9) 100%);
-    border-color: #8B0000;
+            #c62828 0%,
+            #b71c1c 100%);
+    border-color: #b71c1c;
 }
 
 .action-btn.destroy:hover {
     background: linear-gradient(180deg,
-            rgba(178, 34, 34, 0.8) 0%,
-            rgba(139, 0, 0, 0.9) 100%);
-    border-color: #B22222;
+            #ef5350 0%,
+            #d32f2f 100%);
+    border-color: #e57373;
 }
 
 /* ============================================
-   PROGRESS BAR OVERLAY - WILD WEST THEME
+   PROGRESS BAR OVERLAY - GREEN NATURE THEME
    ============================================ */
 
 #progress-overlay {
@@ -373,46 +325,44 @@ body {
 
 .progress-container {
     background: linear-gradient(180deg,
-            rgba(45, 32, 20, 0.95) 0%,
-            rgba(25, 18, 10, 0.98) 100%);
-    border: 3px solid #8B4513;
+            rgba(45, 74, 28, 0.95) 0%,
+            rgba(27, 51, 10, 0.98) 100%);
+    border: 2px solid #2d4a1c;
     border-radius: 8px;
     padding: 20px 40px;
     min-width: 350px;
     text-align: center;
     box-shadow:
-        0 0 0 2px #5C3317,
+        0 0 0 2px #1b330a,
         0 15px 40px rgba(0, 0, 0, 0.8);
 }
 
 .progress-title {
     font-family: 'Rye', cursive;
-    color: #C4A35A;
+    color: #f1f8e9;
     font-size: 20px;
     margin-bottom: 15px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     letter-spacing: 2px;
 }
 
 .progress-bar-outer {
     height: 24px;
-    background: linear-gradient(180deg,
-            rgba(0, 0, 0, 0.6) 0%,
-            rgba(30, 20, 10, 0.8) 100%);
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 4px;
     overflow: hidden;
-    border: 2px solid #5C3317;
+    border: 2px solid #1b330a;
     margin-bottom: 10px;
 }
 
 .progress-bar-inner {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #8B4513, #CD853F, #DEB887);
+    background: linear-gradient(90deg, #66bb6a, #43a047, #2e7d32);
     border-radius: 2px;
     transition: width 0.1s linear;
     position: relative;
-    box-shadow: 0 0 15px rgba(222, 184, 135, 0.5);
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
 }
 
 .progress-bar-inner::after {
@@ -423,19 +373,19 @@ body {
     right: 0;
     height: 50%;
     background: linear-gradient(180deg,
-            rgba(255, 255, 255, 0.4) 0%,
+            rgba(255, 255, 255, 0.3) 0%,
             transparent 100%);
 }
 
 .progress-percentage {
     font-family: 'Rye', cursive;
-    color: #C4A35A;
+    color: #f1f8e9;
     font-size: 16px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* ============================================
-   TEXT POPUP - WILD WEST THEME
+   TEXT POPUP - GREEN NATURE THEME
    ============================================ */
 
 #text-popup {
@@ -466,20 +416,20 @@ body {
 .popup-content {
     font-family: 'Rye', cursive;
     font-size: 20px;
-    color: #C4A35A;
+    color: #f1f8e9;
     text-shadow:
-        2px 2px 4px rgba(0, 0, 0, 0.9),
-        0 0 20px rgba(196, 163, 90, 0.5);
+        0 2px 4px rgba(0, 0, 0, 0.9),
+        0 0 10px rgba(76, 175, 80, 0.4);
     letter-spacing: 2px;
     text-transform: uppercase;
     padding: 12px 25px;
     background: linear-gradient(180deg,
-            rgba(45, 32, 20, 0.9) 0%,
-            rgba(25, 18, 10, 0.95) 100%);
-    border: 2px solid #8B4513;
+            rgba(45, 74, 28, 0.95) 0%,
+            rgba(27, 51, 10, 0.98) 100%);
+    border: 2px solid #2d4a1c;
     border-radius: 6px;
     box-shadow:
-        0 0 0 2px #5C3317,
+        0 0 0 2px #1b330a,
         0 8px 30px rgba(0, 0, 0, 0.8);
 }
 
@@ -496,7 +446,7 @@ body {
 }
 
 /* ============================================
-   WATER SOURCE MENU - WILD WEST THEME
+   WATER SOURCE MENU - GREEN NATURE THEME
    ============================================ */
 
 #water-menu {
@@ -521,41 +471,42 @@ body {
 
 .water-menu-container {
     background: linear-gradient(180deg,
-            rgba(45, 32, 20, 0.95) 0%,
-            rgba(25, 18, 10, 0.98) 100%);
-    border: 3px solid #8B4513;
+            rgba(45, 74, 28, 0.95) 0%,
+            rgba(27, 51, 10, 0.98) 100%);
+    border: 3px solid #2d4a1c;
     border-radius: 8px;
     padding: 0;
     min-width: 260px;
     overflow: hidden;
     box-shadow:
-        0 0 0 2px #5C3317,
+        0 0 0 2px #1b330a,
         0 15px 50px rgba(0, 0, 0, 0.9),
         inset 0 0 60px rgba(0, 0, 0, 0.3);
 }
 
 .water-menu-header {
     background: linear-gradient(180deg,
-            rgba(92, 51, 23, 0.9) 0%,
-            rgba(60, 35, 15, 0.95) 100%);
+            rgba(61, 90, 44, 0.9) 0%,
+            rgba(45, 74, 28, 0.95) 100%);
     padding: 15px 20px;
     display: flex;
     align-items: center;
     gap: 12px;
-    border-bottom: 2px solid rgba(196, 163, 90, 0.4);
+    border-bottom: 2px solid rgba(76, 175, 80, 0.4);
 }
 
 .water-icon {
     font-size: 28px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+    color: #f1f8e9;
 }
 
 .water-title {
     font-family: 'Rye', cursive;
-    color: #C4A35A;
+    color: #f1f8e9;
     font-size: 18px;
     letter-spacing: 3px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .water-menu-buttons {
@@ -571,11 +522,11 @@ body {
     gap: 12px;
     padding: 14px 18px;
     background: linear-gradient(180deg,
-            rgba(92, 51, 23, 0.6) 0%,
-            rgba(60, 35, 15, 0.8) 100%);
-    border: 2px solid rgba(139, 69, 19, 0.6);
+            rgba(45, 74, 28, 0.6) 0%,
+            rgba(27, 51, 10, 0.8) 100%);
+    border: 1px solid rgba(76, 175, 80, 0.3);
     border-radius: 6px;
-    color: #C4A35A;
+    color: #f1f8e9;
     font-family: 'IM Fell English SC', serif;
     font-size: 16px;
     cursor: pointer;
@@ -586,9 +537,9 @@ body {
 
 .water-btn:hover {
     background: linear-gradient(180deg,
-            rgba(139, 69, 19, 0.8) 0%,
-            rgba(92, 51, 23, 0.9) 100%);
-    border-color: #C4A35A;
+            rgba(76, 175, 80, 0.4) 0%,
+            rgba(56, 142, 60, 0.5) 100%);
+    border-color: #f1f8e9;
     transform: translateX(-5px);
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
 }
@@ -609,11 +560,11 @@ body {
 .water-btn .btn-key {
     font-family: 'Courier New', monospace;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
     background: rgba(0, 0, 0, 0.4);
     padding: 4px 8px;
     border-radius: 4px;
-    border: 1px solid rgba(196, 163, 90, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .water-menu-footer {
@@ -622,6 +573,6 @@ body {
     color: rgba(255, 255, 255, 0.4);
     font-size: 12px;
     background: rgba(0, 0, 0, 0.3);
-    border-top: 1px solid rgba(196, 163, 90, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     letter-spacing: 1px;
 }

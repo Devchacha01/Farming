@@ -1,11 +1,11 @@
-# RSG Farming Resource
+# rsg-farming by devchacha
 
 A comprehensive farming system for RedM RSG-Core, allowing you to plant, water, maintain, and harvest a wide variety of crops.
 
 ## Features
 - **Ghost Placement System**: visual placement of crops with fine-tuned positioning controls.
 - **Growth System**: 
-  - Real-time growth based on watering.
+  - Server-side persistent growth (ticks every minute).
   - Fertilizer boosts growth speed by 35%.
   - Visual stages of plant growth.
 - **Maintenance**: 
@@ -28,21 +28,46 @@ A comprehensive farming system for RedM RSG-Core, allowing you to plant, water, 
 
 ## Installation
 
-1. **Download & Place**:
-   - Download the resource and place it in your `resources` folder.
-   - Rename the folder to `rsg-farming`.
+### 1. Download & Place
+- Download the resource and place it in your `resources` folder.
+- Rename the folder to `rsg-farming`.
 
-2. **Database Import**:
-   - Import the `farming.sql` file into your database to create the necessary tables.
+### 2. Database Import
+- Import the `farming.sql` file into your database to create the necessary tables.
 
-3. **Add Items**:
-   - Copy the contents of the `items.lua` file included in this resource.
-   - Paste them into your shared items file (e.g., `rsg-core/shared/items.lua`).
-   - Ensure you have the corresponding images for these items in your inventory images folder.
+### 3. Add Items
+- Copy the contents of the `items.lua` file included in this resource.
+- Paste them into your shared items file (e.g., `rsg-core/shared/items.lua`).
+- Ensure you have the corresponding images for these items in your inventory images folder.
 
-4. **Server Config**:
-   - Add `ensure rsg-farming` to your `server.cfg` file.
-   - **Order Matters**: Ensure it is started **after** `rsg-core`, `rsg-inventory`, and `ox_lib`.
+### 4. Server Config
+- Add `ensure rsg-farming` to your `server.cfg` file.
+- **Order Matters**: Ensure it is started **after** `rsg-core`, `rsg-inventory`, and `ox_lib`.
+
+## Configuration
+Edit `config.lua` to customize the server mechanics.
+
+### Changing Growth Time & Watering
+You can adjust how long each plant takes to grow in `Config.Seeds`.
+- **totaltime**: Time in minutes for full growth.
+- **Watering Logic**: The system **automatically calculates water decay** based on `totaltime`.
+  - A full bucket of water will last exactly **1/3rd of the growth cycle**.
+  - This forces players to tend to their crops ~3 times before harvest.
+
+**Example Config Entry:**
+```lua
+["Corn"] = {
+    seedname = "corn_seed", 
+    prop = "p_corn01x",    
+    totaltime = 15,       -- 15 Minutes to grow. Needs watering every 5 mins.
+    rewardcount = 2,      -- Base reward amount
+    stages = { ... }      -- Multi-stage visual models
+},
+```
+
+Other settings:
+- **Banned Zones**: Configure areas where planting is forbidden.
+- **Shop Locations**: Add or move NPC shops.
 
 ## Usage
 
@@ -75,7 +100,7 @@ Farming is **strictly prohibited** within the limits of major towns and settleme
 - **Getting Water**:
   1. Equip/Hold a **Bucket**.
   2. Go to a **River**, **Lake**, or **Water Pump**.
-  3. Press `[G]` when prompted to open the particular water menu.
+  3. Press `[ALT]` when prompted to open the water menu.
   4. Select **Fill Bucket** to get a `fullbucket`.
      - *You can also Drink or Wash yourself here.*
 
@@ -109,22 +134,22 @@ There are **37** different types of crops you can cultivate:
 | 🥬 | Alaskan Ginseng | 🥣 | English Mace |
 | 🥬 | American Ginseng | 🍺 | Hop |
 | 🍎 | Apple | 🍋 | Lemon |
-| 🍌 | Banana | 🌿 | Milk Weed |
-| 🌾 | Barley | 🌿 | Oleander Sage |
-| 🍇 | Black Currant | 🌿 | Oregano |
-| 🌺 | Blood Flower | 🍄 | Parasol Mushroom |
+| 🍌 | Banana | 🥬 | Lettuce |
+| 🌾 | Barley | 🌿 | Milk Weed |
+| 🍇 | Black Currant | 🌿 | Oleander Sage |
+| 🌺 | Blood Flower | 🌿 | Oregano |
+| 🥦 | Broccoli | 🍄 | Parasol Mushroom |
 | 🌼 | Choc Daisy | 🍑 | Peach |
 | 🍒 | Cherry | 🌶️ | Pepper |
-| 🍫 | Cocoa | 🥔 | Potato |
-| ☕ | Coffee | 🌺 | Prairie Poppy |
-| 🌽 | Corn | 🎃 | Pumpkin |
-| 🍒 | Creekplum | 🍇 | Red Raspberry |
-| 🌿 | Creeking Thyme | 🌿 | Red Sage |
-| 🧅 | Crows Garlic | 🍬 | Sugar (Sugarcane) |
-| 🍵 | Tea | 🍂 | Tobacco |
-| 🌾 | Wheat | 🥕 | Wild Carrot |
-| 🌿 | Wild Mint | 🫐 | Wintergreen Berry |
-| 🌼 | Yarrow | | |
+| ☕ | Coffee | 🥔 | Potato |
+| 🌽 | Corn | 🌺 | Prairie Poppy |
+| 🍒 | Creekplum | 🎃 | Pumpkin |
+| 🌿 | Creeking Thyme | 🍇 | Red Raspberry |
+| 🧅 | Crows Garlic | 🌿 | Red Sage |
+| 🍬 | Sugar (Sugarcane) | 🍵 | Tea |
+| 🍂 | Tobacco | 🌾 | Wheat |
+| 🥕 | Wild Carrot | 🌿 | Wild Mint |
+| 🫐 | Wintergreen Berry | 🌼 | Yarrow |
 
 - **Tending Crops**:
   1. Go to your planted crop.
@@ -141,13 +166,5 @@ There are **37** different types of crops you can cultivate:
 - Once it reaches **100%**, the Harvest option will become available in the menu.
 - Harvest to receive your crops!
 
-## Configuration (`config.lua`)
-- **Seeds**: Add new plants, change rewards, growth times, and props.
-- **Water Sources**: specific water hashes and types.
-- **Banned Zones**: Configure areas where planting is forbidden.
-- **Shop Locations**: Add or move NPC shops.
-
-## Support
-If you encounter issues:
-- Check the server console (F8) for errors.
-- Verify you have the latest `rsg-core` and dependent resources.
+## Credits
+- Script created by **devchacha**

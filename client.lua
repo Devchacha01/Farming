@@ -34,12 +34,14 @@ end)
 -- NUI FUNCTIONS
 --------------------------------------------------------------------------------
 local menuOpen = false
+local currentMenuPlantId = nil
 
 function ShowPlantMenu(plantId)
     local plant = Plants[plantId]
     if not plant then return end
     
     menuOpen = true
+    currentMenuPlantId = plantId
     SetNuiFocus(true, true)
     
     local waterPercent = plant.water or 0
@@ -95,44 +97,29 @@ end
 
 -- Calculate growth percentage based on server wateredTime
 -- Calculate growth percentage based on server wateredTime
+-- Calculate growth (Server Synced)
 function CalculateGrowth(plant)
-    if not plant.wateredTime then return 0 end
-    
-    local effectiveGrowthTime = GROWTH_TIME
-    if plant.fertilized then
-        effectiveGrowthTime = math.floor(GROWTH_TIME * 0.65) -- 35% faster
-    end
-
-    -- wateredTime is server os.time(), we use serverTimeOffset to sync
-    local serverTime = plant.wateredTime
-    local clientSyncTime = plant.clientSyncTime or plant.wateredTime
-    
-    -- Simpler: just use elapsed since wateredTime was set (synced via elapsedOnSync)
-    local elapsed = 0
-    if plant.elapsedOnSync then
-        elapsed = plant.elapsedOnSync + ((GetGameTimer() - (plant.syncGameTimer or GetGameTimer())) / 1000)
-    end
-    
-    local growthPercent = math.floor((elapsed / effectiveGrowthTime) * 100)
-    return math.min(growthPercent, 100)
+    return math.floor(plant.growth or 0)
 end
 
--- Calculate time remaining based on server wateredTime
+-- Calculate time remaining based on growth percentage
 function CalculateTimeRemaining(plant)
-    local effectiveGrowthTime = GROWTH_TIME
+    local seedData = Config.Seeds[plant.type]
+    -- Get total time in seconds (default 5 mins/300s if missing)
+    local totalTimeSeconds = (seedData and seedData.totaltime and seedData.totaltime * 60) or 300
+    
+    local effectiveGrowthTime = totalTimeSeconds
     if plant.fertilized then
-        effectiveGrowthTime = math.floor(GROWTH_TIME * 0.65) -- 35% faster
+        effectiveGrowthTime = math.floor(totalTimeSeconds / 1.35) -- Matches server speed boost (1.35x rate)
     end
 
-    if not plant.wateredTime then return effectiveGrowthTime end
+    local growth = plant.growth or 0
+    if growth >= 100 then return 0 end
     
-    if plant.elapsedOnSync then
-        local elapsed = plant.elapsedOnSync + ((GetGameTimer() - (plant.syncGameTimer or GetGameTimer())) / 1000)
-        local remaining = effectiveGrowthTime - elapsed
-        return math.max(remaining, 0)
-    end
+    local remainingPercent = 100 - growth
+    local remainingSeconds = effectiveGrowthTime * (remainingPercent / 100)
     
-    return effectiveGrowthTime
+    return math.ceil(remainingSeconds)
 end
 
 -- NUI Callbacks
@@ -160,6 +147,7 @@ end)
 RegisterNUICallback('closeMenu', function(data, cb)
     cb('ok')
     menuOpen = false
+    currentMenuPlantId = nil
     SetNuiFocus(false, false)
 end)
 
@@ -167,11 +155,13 @@ end)
 --------------------------------------------------------------------------------
 -- FARMING SHOP NPC (Third-Eye)
 --------------------------------------------------------------------------------
+local ShopEntities = {}
+
 CreateThread(function()
     if not Config.ShopNPCs then return end
     
     for i, shop in pairs(Config.ShopNPCs) do
-        local shopIndex = i -- Fix for Lua closure capture
+        local shopIndex = i
         local model = GetHashKey(shop.model)
         RequestModel(model)
         while not HasModelLoaded(model) do Wait(10) end
@@ -183,12 +173,30 @@ CreateThread(function()
         FreezeEntityPosition(ped, true)
         SetBlockingOfNonTemporaryEvents(ped, true)
         
+        local blip = nil
         -- Blip
         if shop.blip and shop.blip.enabled then
-            local blip = Citizen.InvokeNative(0x554D9D53F696D002, shop.coords.x, shop.coords.y, shop.coords.z)
-            SetBlipSprite(blip, shop.blip.sprite, true)
-            Citizen.InvokeNative(0x9CB1A1623062F402, blip, shop.blip.label)
+            -- 0x554D9D53F696D002 = AddBlipForCoord(style, x, y, z)
+            blip = Citizen.InvokeNative(0x554D9D53F696D002, 1664425300, shop.coords.x, shop.coords.y, shop.coords.z)
+            
+            local spriteHash = shop.blip.sprite
+            if type(spriteHash) == 'string' then spriteHash = GetHashKey(spriteHash) end
+            SetBlipSprite(blip, spriteHash, true)
+            
+            -- SetBlipScale (0xD38744167B2FA257)
+            Citizen.InvokeNative(0xD38744167B2FA257, blip, 0.5) -- Scale 0.5
+
+            -- Blip Modifier (Color)
+            if shop.blip.color then
+                Citizen.InvokeNative(0x662D364ABF16DE2F, blip, GetHashKey(shop.blip.color)) -- BlipAddModifier
+            end
+
+            -- CreateVarString for Blip Label
+            local blipName = CreateVarString(10, 'LITERAL_STRING', shop.blip.label)
+            Citizen.InvokeNative(0x9CB1A1623062F402, blip, blipName) -- SetBlipNameFromPlayerString
         end
+        
+        table.insert(ShopEntities, { ped = ped, blip = blip })
         
         -- Interaction
         exports['rsg-target']:AddTargetEntity(ped, {
@@ -204,6 +212,14 @@ CreateThread(function()
             },
             distance = 2.5,
         })
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resourceName)
+    if (GetCurrentResourceName() ~= resourceName) then return end
+    for _, entity in pairs(ShopEntities) do
+        if entity.ped then DeletePed(entity.ped) end
+        if entity.blip then RemoveBlip(entity.blip) end
     end
 end)
 
@@ -267,7 +283,7 @@ FinalizePlacement = function()
     ShowPopup('Planting ' .. currentPlantType .. '...', 5000)
     
     -- Play planting animation
-    TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_FARMER_RAKE'), -1, true, false, false, false)
+    TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_FARMER_WEEDING'), -1, true, false, false, false)
     ShowProgress('Planting Seeds...', 5000)
     
     Wait(5000)
@@ -297,6 +313,13 @@ end
 local function StartPlacement(plantType)
     if isPlacing then return end
     
+    -- Shovel Check
+    local hasShovel = exports['rsg-inventory']:HasItem('shovel', 1)
+    if not hasShovel then
+        exports.ox_lib:notify({ title = 'Error', description = 'You need a shovel to plant seeds!', type = 'error' })
+        return
+    end
+
     if Config.EnableBannedZones and Config.BannedZones then
         local pCoords = GetEntityCoords(PlayerPedId())
         for _, zone in pairs(Config.BannedZones) do
@@ -317,7 +340,12 @@ local function StartPlacement(plantType)
     currentPlantType = plantType
     placementHeading = 0.0
     
+    -- Determine Prop (Use Mature Stage if available)
     local propName = seedData.prop
+    if seedData.stages and #seedData.stages > 0 then
+        propName = seedData.stages[#seedData.stages].prop -- Use the last stage (Mature)
+    end
+
     local model = GetHashKey(propName)
     RequestModel(model)
     while not HasModelLoaded(model) do Wait(10) end
@@ -330,7 +358,7 @@ local function StartPlacement(plantType)
     SetEntityCollision(ghostObject, false, false)
     FreezeEntityPosition(ghostObject, true)
     
-    ShowPopup('PLACE ' .. string.upper(plantType) .. ' • ENTER to Plant • BACKSPACE to Cancel', 0)
+    ShowPopup('PLACE ' .. string.upper(plantType) .. ' • [Q/E] ROTATE • ENTER to Plant • BACKSPACE to Cancel', 0)
 
     
     CreateThread(function()
@@ -404,30 +432,36 @@ end
 --------------------------------------------------------------------------------
 RegisterNetEvent('rsg-farming:client:syncPlants', function(serverPlants)
     Plants = serverPlants or {}
-    local syncTime = GetGameTimer()
-    for id, plant in pairs(Plants) do
-        plant.syncGameTimer = syncTime
-        SpawnPlantProp(id, plant)
+    -- Optimization: Do NOT spawn all props here. The distance loop will handle it.
+end)
+
+RegisterNetEvent('rsg-farming:client:syncPlantsBatch', function(batchUpdates)
+    for id, plant in pairs(batchUpdates) do
+        -- Update local data
+        -- Preserve currentModel if existing to prevent unnecessary flickering if model hasn't changed
+        local oldModel = Plants[id] and Plants[id].currentModel
+        Plants[id] = plant
+        if oldModel then Plants[id].currentModel = oldModel end
+
+        -- Refresh menu logic
+        if menuOpen and currentMenuPlantId == id then
+            ShowPlantMenu(id)
+        end
     end
 end)
 
 RegisterNetEvent('rsg-farming:client:addPlant', function(plantData)
-    plantData.syncGameTimer = GetGameTimer()
-    plantData.elapsedOnSync = 0 -- Just planted, no elapsed time
     Plants[plantData.id] = plantData
     SpawnPlantProp(plantData.id, plantData)
 end)
 
 RegisterNetEvent('rsg-farming:client:updatePlant', function(plantId, newData)
-    newData.syncGameTimer = GetGameTimer()
-    -- If just watered, set elapsed to 0
-    if newData.wateredTime and (not Plants[plantId] or not Plants[plantId].wateredTime) then
-        newData.elapsedOnSync = 0
-    elseif newData.wateredTime then
-        -- Keep existing elapsed or recalculate
-        newData.elapsedOnSync = Plants[plantId].elapsedOnSync or 0
-    end
     Plants[plantId] = newData
+    
+    -- If menu is open for this plant, refresh it
+    if menuOpen and currentMenuPlantId == plantId then
+        ShowPlantMenu(plantId)
+    end
 end)
 
 RegisterNetEvent('rsg-farming:client:removePlant', function(plantId)
@@ -442,14 +476,34 @@ end)
 --------------------------------------------------------------------------------
 -- SPAWN PLANT PROP WITH THIRD-EYE
 --------------------------------------------------------------------------------
+-- Helper: Get Model based on Growth Stage
+local function GetPlantModel(plantType, growthPercent)
+    local seedData = Config.Seeds[plantType]
+    if not seedData then return nil end
+    
+    -- Default single prop
+    local modelName = seedData.prop
+    
+    -- Multi-stage check
+    if seedData.stages then
+        for _, stage in ipairs(seedData.stages) do
+            if growthPercent >= stage.minGrowth then
+                modelName = stage.prop
+            end
+        end
+    end
+    
+    return GetHashKey(modelName)
+end
+
 function SpawnPlantProp(id, plant)
+    -- If already rendered, check if model needs update (handled by main loop) or simple return
     if RenderedPlants[id] then return end
     
-    local seedData = Config.Seeds[plant.type]
-    if not seedData then return end
-    
-    local propName = seedData.prop
-    local model = GetHashKey(propName)
+    local growth = CalculateGrowth(plant)
+    local model = GetPlantModel(plant.type, growth)
+    if not model then return end
+
     RequestModel(model)
     local timeout = 0
     while not HasModelLoaded(model) and timeout < 100 do
@@ -460,6 +514,7 @@ function SpawnPlantProp(id, plant)
     if not HasModelLoaded(model) then return end
     
     local coords = vector3(plant.coords.x, plant.coords.y, plant.coords.z)
+    local seedData = Config.Seeds[plant.type]
     local groundZ = GetGroundZ(coords.x, coords.y, coords.z)
     
     local obj = CreateObject(model, coords.x, coords.y, groundZ - (seedData.offset or 0.0), false, false, false)
@@ -469,6 +524,9 @@ function SpawnPlantProp(id, plant)
     SetEntityCollision(obj, true, true)
     
     RenderedPlants[id] = obj
+    
+    -- Store current model hash on the entity object index for later comparison
+    plant.currentModel = model 
     
     -- Add Third-Eye Target to Plant
     exports['rsg-target']:AddTargetEntity(obj, {
@@ -489,6 +547,33 @@ end
 --------------------------------------------------------------------------------
 -- PLANT INTERACTION FUNCTIONS
 --------------------------------------------------------------------------------
+
+-- Helper function to properly clean up scenario animations and attached props
+local function CleanupScenario(ped)
+    ClearPedTasksImmediately(ped)
+    
+    -- Remove any props attached to hands (common bone IDs for hands)
+    local handBones = {
+        GetEntityBoneIndexByName(ped, "SKEL_L_Hand"),
+        GetEntityBoneIndexByName(ped, "SKEL_R_Hand"),
+        GetEntityBoneIndexByName(ped, "PH_L_Hand"),
+        GetEntityBoneIndexByName(ped, "PH_R_Hand"),
+    }
+    
+    -- Find and delete attached objects
+    local coords = GetEntityCoords(ped)
+    local objects = GetGamePool('CObject')
+    for _, obj in pairs(objects) do
+        if DoesEntityExist(obj) then
+            local objCoords = GetEntityCoords(obj)
+            local dist = #(coords - objCoords)
+            if dist < 2.0 and IsEntityAttachedToEntity(obj, ped) then
+                DeleteEntity(obj)
+            end
+        end
+    end
+end
+
 function WaterPlant(plantId)
     local plant = Plants[plantId]
     if not plant then return end
@@ -500,12 +585,13 @@ function WaterPlant(plantId)
         return
     end
     
+    local ped = PlayerPedId()
     ShowPopup('Watering Crop...', 4000)
-    TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_BUCKET_POUR_LOW'), -1, true, false, false, false)
+    TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_BUCKET_POUR_LOW'), -1, true, false, false, false)
     ShowProgress('Watering...', 4000)
     
     Wait(4000)
-    ClearPedTasks(PlayerPedId())
+    CleanupScenario(ped)
     HideProgress()
     HidePopup()
     
@@ -517,12 +603,13 @@ function RemoveWeeds(plantId)
     local plant = Plants[plantId]
     if not plant then return end
     
+    local ped = PlayerPedId()
     ShowPopup('Removing Weeds...', 5000)
-    TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_FARMER_WEEDING'), -1, true, false, false, false)
+    TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_FARMER_WEEDING'), -1, true, false, false, false)
     ShowProgress('Removing Weeds...', 5000)
     
     Wait(5000)
-    ClearPedTasks(PlayerPedId())
+    CleanupScenario(ped)
     HideProgress()
     HidePopup()
     
@@ -540,12 +627,13 @@ function FertilizePlant(plantId)
         return
     end
 
+    local ped = PlayerPedId()
     ShowPopup('Fertilizing...', 4000)
-    TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_FARMER_RAKE'), -1, true, false, false, false)
+    TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_FEED_CHICKEN'), -1, true, false, false, false)
     ShowProgress('Fertilizing...', 4000)
     
     Wait(4000)
-    ClearPedTasks(PlayerPedId())
+    CleanupScenario(ped)
     HideProgress()
     HidePopup()
     
@@ -563,12 +651,13 @@ function HarvestPlant(plantId)
         return
     end
     
+    local ped = PlayerPedId()
     ShowPopup('Harvesting Crop...', 5000)
-    TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_FARMER_RAKE'), -1, true, false, false, false)
+    TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_FARMER_WEEDING'), -1, true, false, false, false)
     ShowProgress('Harvesting...', 5000)
     
     Wait(5000)
-    ClearPedTasks(PlayerPedId())
+    CleanupScenario(ped)
     HideProgress()
     HidePopup()
     
@@ -577,12 +666,22 @@ function HarvestPlant(plantId)
 end
 
 function DestroyPlant(plantId)
+    local plant = Plants[plantId]
+    if not plant then return end
+
+    local ped = PlayerPedId()
     ShowPopup('Destroying Crop...', 3000)
-    TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_FARMER_RAKE'), -1, true, false, false, false)
-    ShowProgress('Destroying...', 3000)
+    TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_CROUCH_INSPECT'), -1, true, false, false, false)
+    ShowProgress('Setting Fire...', 3000)
+    
+    -- Create fire effect at plant location
+    local plantCoords = vector3(plant.coords.x, plant.coords.y, plant.coords.z)
+    local fire = StartScriptFire(plantCoords.x, plantCoords.y, plantCoords.z, 25, false, false, false, 0)
     
     Wait(3000)
-    ClearPedTasks(PlayerPedId())
+    
+    RemoveScriptFire(fire)
+    CleanupScenario(ped)
     HideProgress()
     HidePopup()
     
@@ -598,105 +697,193 @@ RegisterNetEvent('rsg-farming:client:useSeed', function(plantType)
 end)
 
 --------------------------------------------------------------------------------
--- WATER INTERACTION (Rivers/Pumps)
+-- WATER INTERACTION (Pumps & Natural Water)
 --------------------------------------------------------------------------------
-local function ShowWaterMenu()
-    if menuOpen then return end
-    menuOpen = true
-    SetNuiFocus(true, true)
-    SendNUIMessage({ action = 'openWaterMenu' })
-end
 
-RegisterNUICallback('closeWaterMenu', function(data, cb)
-    cb('ok')
-    menuOpen = false
-    SetNuiFocus(false, false)
-end)
-
-RegisterNUICallback('waterAction', function(data, cb)
-    cb('ok')
-    menuOpen = false
-    SetNuiFocus(false, false)
-    
-    local action = data.action
+-- Action Handler
+RegisterNetEvent('rsg-farming:client:waterAction', function(action)
+    local ped = PlayerPedId()
     
     if action == 'fillBucket' then
-        TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_BUCKET_POUR_LOW'), -1, true, false, false, false)
-        ShowProgress('Filling Bucket...', 4000)
-        Wait(4000)
-        ClearPedTasks(PlayerPedId())
-        HideProgress()
-        TriggerServerEvent('rsg-farming:server:fillBucket')
+        local hasBucket = exports['rsg-inventory']:HasItem('bucket', 1) 
+        if not hasBucket then
+             exports.ox_lib:notify({ title='Error', description='You need an empty bucket!', type='error' })
+             return
+        end
+        TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_BUCKET_POUR_LOW'), -1, true, false, false, false)
+        if lib.progressBar({
+            duration = 4000,
+            label = 'Filling Bucket...',
+            useWhileDead = false,
+            canCancel = true,
+            disable = { move = true, car = true, combat = true },
+        }) then
+            CleanupScenario(ped)
+            TriggerServerEvent('rsg-farming:server:fillBucket')
+        else
+            CleanupScenario(ped)
+        end
         
     elseif action == 'drink' then
-        TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_BUCKET_DRINK_GROUND'), -1, true, false, false, false)
-        ShowProgress('Drinking...', 5000)
-        Wait(5000)
-        ClearPedTasks(PlayerPedId())
-        HideProgress()
-        TriggerServerEvent("RSGCore:Server:SetMetaData", "thirst", RSGCore.Functions.GetPlayerData().metadata["thirst"] + 50)
+        TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_DRINKING'), -1, true, false, false, false)
+        if lib.progressBar({
+            duration = 5000,
+            label = 'Drinking...',
+            useWhileDead = false,
+            canCancel = true,
+            disable = { move = true, car = true, combat = true },
+        }) then
+            CleanupScenario(ped)
+            TriggerServerEvent('rsg-farming:server:drinkWater')
+        else
+            CleanupScenario(ped)
+        end
         
     elseif action == 'wash' then
-        TaskStartScenarioInPlace(PlayerPedId(), GetHashKey('WORLD_HUMAN_BUCKET_DRINK_GROUND'), -1, true, false, false, false)
-        ShowProgress('Washing...', 5000)
-        Wait(5000)
-        ClearPedTasks(PlayerPedId())
-        HideProgress()
-        ClearPedEnvDirt(PlayerPedId())
-        ClearPedBloodDamage(PlayerPedId())
+        TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_WASH_FACE_BUCKET_GROUND'), -1, true, false, false, false)
+        if lib.progressBar({
+            duration = 5000,
+            label = 'Washing...',
+            useWhileDead = false,
+            canCancel = true,
+            disable = { move = true, car = true, combat = true },
+        }) then
+            CleanupScenario(ped)
+            TriggerServerEvent('rsg-farming:server:washSelf')
+        else
+            CleanupScenario(ped)
+        end
     end
 end)
 
--- Helper text
-local function DrawText3Ds(x, y, z, text)
+-- Pump Target (Third Eye)
+CreateThread(function()
+    local waterPumps = {'p_waterpump01x', 'p_waterpump01x_high'}
+    exports['rsg-target']:AddTargetModel(waterPumps, {
+        options = {
+            {
+                type = "client",
+                action = function() TriggerEvent('rsg-farming:client:waterAction', 'fillBucket') end,
+                icon = "fas fa-faucet",
+                label = "Fill Bucket",
+            },
+            {
+                type = "client",
+                action = function() TriggerEvent('rsg-farming:client:waterAction', 'drink') end,
+                icon = "fas fa-glass-water",
+                label = "Drink",
+            },
+            {
+                type = "client",
+                action = function() TriggerEvent('rsg-farming:client:waterAction', 'wash') end,
+                icon = "fas fa-soap",
+                label = "Wash",
+            },
+        },
+        distance = 2.0,
+    })
+end)
+
+-- Helper for 3D Text (Local definition ensures availability)
+local function DrawText3D(x, y, z, text)
     local onScreen, _x, _y = GetScreenCoordFromWorldCoord(x, y, z)
-    SetTextScale(0.35, 0.35)
-    SetTextFontForCurrentCommand(1)
-    SetTextColor(255, 255, 255, 215)
-    local str = CreateVarString(10, "LITERAL_STRING", text, Citizen.ResultAsLong())
-    SetTextCentre(1)
-    DisplayText(str, _x, _y)
+    if onScreen then
+        SetTextScale(0.35, 0.35)
+        SetTextFontForCurrentCommand(1)
+        SetTextColor(255, 255, 255, 215)
+        local str = CreateVarString(10, "LITERAL_STRING", text)
+        SetTextCentre(1)
+        DisplayText(str, _x, _y)
+    end
 end
 
--- Water/Pump Thread
+-- Natural Water Interaction (Ox Lib UI)
 CreateThread(function()
+    local textShown = false
     while true do
-        Wait(1)
-        local sleep = true
-        local coords = GetEntityCoords(PlayerPedId())
-        local Water = Citizen.InvokeNative(0x5BA7A68A346A5A91, coords.x+3, coords.y+3, coords.z)
+        local sleep = 1000
         
-        local inWater = false
-        if Config.WaterTypes then
-            for _, v in pairs(Config.WaterTypes) do
-                if Water == v.waterhash then
-                    inWater = true
-                    break
+        if LocalPlayer.state.isLoggedIn then
+            local ped = PlayerPedId()
+            
+            if IsEntityInWater(ped) and not IsPedInAnyVehicle(ped, true) then
+                sleep = 0
+                
+                if not textShown then
+                    lib.showTextUI('[ALT] Fill Bucket', { position = "right-center" })
+                    textShown = true
+                end
+                
+                if IsControlJustPressed(0, 0x8AAA0AD4) then -- LEFT ALT
+                    TriggerEvent('rsg-farming:client:waterAction', 'fillBucket')
+                end
+            else
+                if textShown then
+                    lib.hideTextUI()
+                    textShown = false
                 end
             end
         end
+        Wait(sleep)
+    end
+end)
 
-        -- Water Interaction
-        if inWater and IsPedOnFoot(PlayerPedId()) and IsEntityInWater(PlayerPedId()) then
-            sleep = false
-            DrawText3Ds(coords.x, coords.y, coords.z + 1.0, "[G] Water Source")
-            
-            if IsControlJustReleased(0, 0x760A9C6F) then -- G key (standard) or check Config
-                ShowWaterMenu()
-            end
-        end
-
-        -- Pump Logic
-        local pumpObject = GetClosestObjectOfType(coords, 3.0, GetHashKey("p_waterpump01x"), false, false, false)
-        if pumpObject ~= 0 then
-            sleep = false
-            local pumpCoords = GetEntityCoords(pumpObject)
-            DrawText3Ds(pumpCoords.x, pumpCoords.y, pumpCoords.z + 1.0, "[G] Water Pump")
-            if IsControlJustReleased(0, 0x760A9C6F) then -- G key
-                ShowWaterMenu()
-            end
-        end
+--------------------------------------------------------------------------------
+-- DISTANCE CULLING LOOP (Optimization)
+--------------------------------------------------------------------------------
+CreateThread(function()
+    while true do
+        local playerCoords = GetEntityCoords(PlayerPedId())
         
-        if sleep then Wait(1000) end
+        for id, plant in pairs(Plants) do
+            local plantCoords = vector3(plant.coords.x, plant.coords.y, plant.coords.z)
+            local dist = #(playerCoords - plantCoords)
+            
+            if dist < 50.0 then
+                -- In Range: Spawn if not rendered
+                if not RenderedPlants[id] then
+                    SpawnPlantProp(id, plant)
+                end
+            else
+                -- Out of Range: Delete if rendered
+                if RenderedPlants[id] then
+                     exports['rsg-target']:RemoveTargetEntity(RenderedPlants[id])
+                     DeleteObject(RenderedPlants[id])
+                     RenderedPlants[id] = nil
+                     if plant.currentModel then plant.currentModel = nil end
+                end
+            end
+        end
+        Wait(1000) -- Check distance every second
+    end
+end)
+
+--------------------------------------------------------------------------------
+-- GROWTH STAGE UPDATE LOOP
+--------------------------------------------------------------------------------
+CreateThread(function()
+    while true do
+        Wait(5000) -- Check every 5 seconds
+        
+        for id, obj in pairs(RenderedPlants) do
+            local plant = Plants[id]
+            if plant and DoesEntityExist(obj) then
+                local growth = CalculateGrowth(plant)
+                local expectedModel = GetPlantModel(plant.type, growth)
+                
+                -- Check if model needs updating (using stored currentModel)
+                if expectedModel and plant.currentModel ~= expectedModel then
+                    -- Model changed! Respawn it.
+                    -- We delete the old object and spawn the new one.
+                    -- SpawnPlantProp will handle the mechanics.
+                    
+                    exports['rsg-target']:RemoveTargetEntity(obj)
+                    DeleteObject(obj)
+                    RenderedPlants[id] = nil
+                    
+                    SpawnPlantProp(id, plant)
+                end
+            end
+        end
     end
 end)

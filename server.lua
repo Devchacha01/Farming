@@ -41,36 +41,60 @@ Citizen.CreateThread(function()
     end)
 end)
 
--- MAINTENANCE LOOP: Health, Water, Weeds
+-- MAINTENANCE LOOP: Health, Water, Growth
 CreateThread(function()
     while true do
         Wait(60000) -- Run every 1 minute
         local updated = false
+        local batchUpdates = {}
         
         for id, plant in pairs(ServerPlants) do
             local changed = false
             
-            -- 1. Water Decay (~2% per tick)
+            -- Get plant data for calculations
+            local plantType = plant.type or plant.plantname
+            local seedData = Config.Seeds[plantType]
+            local growthTimeMinutes = 5 -- Default 5 min local
+            if seedData and seedData.totaltime then
+                growthTimeMinutes = seedData.totaltime
+            end
+
+            -- 1. Water Decay
+            -- Logic: We want the user to water roughly 3 times during the growth cycle.
+            -- So water capacity (100) should last (growthTime / 3) minutes.
+            -- Decay per minute = 100 / (growthTime / 3) = 300 / growthTime.
+            local decayRate = 300 / growthTimeMinutes
+            
+            -- Keep decay reasonable (min 2, max 50?)
+            decayRate = math.max(2, math.min(50, decayRate))
+
             if plant.water and plant.water > 0 then
-                plant.water = math.max(0, plant.water - 2)
+                plant.water = math.max(0, plant.water - decayRate)
                 changed = true
             end
             
-            -- 2. Weed Growth (DISABLED)
-            -- if not plant.weed then plant.weed = 0 end
-            -- if plant.weed < 100 then
-            --    plant.weed = math.min(100, plant.weed + math.random(2, 5))
-            --    changed = true
-            -- end
+            -- 2. Growth Logic (Server Side)
+			-- Initialize growth if missing
+			if not plant.growth then 
+                plant.growth = 0 
+                changed = true 
+            end
+
+            if plant.water and plant.water > 0 and plant.growth < 100 then
+                 -- Calculate increment per minute: 100 / growthTime
+                 local increment = 100 / growthTimeMinutes
+                 
+                 -- Fertilizer Bonus (35% faster)
+                 if plant.fertilized then
+                     increment = increment * 1.35
+                 end
+                 
+                 plant.growth = math.min(100, plant.growth + increment)
+                 changed = true
+            end
             
             -- 3. Health Decay logic
             if not plant.health then plant.health = 100 end
-            
-            -- If weeds > 50, damage health (DISABLED)
-            -- if plant.weed > 50 then
-            --    plant.health = math.max(0, plant.health - 2)
-            --    changed = true
-            -- end
             
             -- If water < 20, damage health
             if plant.water and plant.water < 20 then
@@ -92,9 +116,15 @@ CreateThread(function()
             if changed and ServerPlants[id] then
                 ServerPlants[id] = plant
                 MySQL.update('UPDATE rsg_farming SET data = ? WHERE id = ?', {json.encode(plant), id})
-                -- Sync update to clients
-                TriggerClientEvent('rsg-farming:client:updatePlant', -1, id, PreparePlantForClient(plant))
+                -- Collect for batch sync
+                batchUpdates[id] = plant
+                updated = true
             end
+        end
+        
+        -- Send BATCH update to all clients (One network event instead of N)
+        if updated then
+            TriggerClientEvent('rsg-farming:client:syncPlantsBatch', -1, batchUpdates)
         end
     end
 end)
@@ -102,19 +132,8 @@ end)
 
 -- Helper: Add elapsed time to plant data for client sync
 function PreparePlantForClient(plant)
-    local clientPlant = {}
-    for k, v in pairs(plant) do
-        clientPlant[k] = v
-    end
-    
-    -- Calculate elapsed time since watering
-    if plant.wateredTime then
-        clientPlant.elapsedOnSync = os.time() - plant.wateredTime
-    else
-        clientPlant.elapsedOnSync = 0
-    end
-    
-    return clientPlant
+    -- Simply return the plant data as the server is now the source of truth for growth
+    return plant
 end
 
 -- Event: Player Requests Plant Data
@@ -138,6 +157,7 @@ RegisterNetEvent('rsg-farming:server:plantSeed', function(plantData)
     plantData.health = 100
     plantData.weed = 0
     plantData.water = 0 
+    plantData.growth = 0
     plantData.fertilized = false
 
     MySQL.insert('INSERT INTO rsg_farming (citizenid, plantname, data) VALUES (?, ?, ?)',
@@ -197,23 +217,13 @@ RegisterNetEvent('rsg-farming:server:harvest', function(plantId)
             return
         end
         
-        -- Check if plant is fully grown (5 minutes = 300 seconds)
-        local GROWTH_TIME = 300
-        if plant.wateredTime then
-            local elapsed = os.time() - plant.wateredTime
-            if elapsed < GROWTH_TIME then
-                local remaining = GROWTH_TIME - elapsed
-                local mins = math.floor(remaining / 60)
-                local secs = remaining % 60
-                TriggerClientEvent('ox_lib:notify', src, { 
-                    title = 'Not Ready', 
-                    description = string.format('Crop needs %d:%02d more to grow', mins, secs), 
-                    type = 'error' 
-                })
-                return
-            end
-        else
-            TriggerClientEvent('ox_lib:notify', src, { title = 'Error', description = 'Plant needs to be watered first', type = 'error' })
+        -- Check if plant is fully grown
+        if plant.growth < 100 then
+             TriggerClientEvent('ox_lib:notify', src, { 
+                title = 'Not Ready', 
+                description = string.format('Crop is at %d%% growth', math.floor(plant.growth or 0)), 
+                type = 'error' 
+            })
             return
         end
         
@@ -332,15 +342,12 @@ RegisterNetEvent('rsg-farming:server:waterPlant', function(plantId)
                 usedCan = true
             end
             
-            -- Update plant water level and set watered time (starts growth)
+            -- Update plant water level
             plant.water = 100
-            if not plant.wateredTime then
-                plant.wateredTime = os.time() -- Server time when first watered
-            end
             
             ServerPlants[plantId] = plant
             MySQL.update('UPDATE rsg_farming SET data = ? WHERE id = ?', {json.encode(plant), plantId})
-            TriggerClientEvent('rsg-farming:client:updatePlant', -1, plantId, PreparePlantForClient(plant))
+            TriggerClientEvent('rsg-farming:client:updatePlant', -1, plantId, plant)
             
             TriggerClientEvent('ox_lib:notify', src, { title = 'Success', description = 'Plant watered! Growth has started.', type = 'success' })
         else
