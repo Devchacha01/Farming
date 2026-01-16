@@ -128,8 +128,8 @@ Config.Seeds = {
         prop = "crp_ginseng_ba_sim",
         stages = {
             { prop = "crp_ginseng_ab_sim", minGrowth = 0 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 50 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 90 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 50, offset = 0.0 },
+            { prop = "crp_ginseng_ba_sim", minGrowth = 90, offset = 0.0 }
         },
         seedname = "alaskan_ginseng_seed",
         seedreq = 2,
@@ -143,7 +143,7 @@ Config.Seeds = {
     ["Pumpkin"] = {
         prop = "p_pumpkin_02x",
         stages = {
-            { prop = "crp_potato_sap_aa_sim", minGrowth = 0 },
+            { prop = "crp_ginseng_ab_sim", minGrowth = 0, offset = 0.0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
             { prop = "p_pumpkin_02x", minGrowth = 80 }
         },
@@ -160,8 +160,8 @@ Config.Seeds = {
         prop = "crp_ginseng_ba_sim",
         stages = {
             { prop = "crp_ginseng_ab_sim", minGrowth = 0 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 50 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 90 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 50, offset = 0.0 },
+            { prop = "crp_ginseng_ba_sim", minGrowth = 90, offset = 0.0 }
         },
         seedname = "american_ginseng_seed",
         seedreq = 2,
@@ -177,7 +177,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "hop_seed",
         seedreq = 2,
@@ -193,7 +193,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "pepper_seed",
         seedreq = 2,
@@ -225,7 +225,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "blood_flower_seed",
         seedreq = 2,
@@ -241,7 +241,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "choc_daisy_seed",
         seedreq = 2,
@@ -289,7 +289,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "Creeking_Thyme_Seed",
         seedreq = 2,
@@ -303,7 +303,7 @@ Config.Seeds = {
     ["Crows Garlic"] = {
         prop = "crp_potato_aa_sim",
         stages = {
-            { prop = "crp_potato_sap_aa_sim", minGrowth = 0 },
+            { prop = "crp_ginseng_ab_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 50 },
             { prop = "crp_potato_aa_sim", minGrowth = 90 }
         },
@@ -321,7 +321,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "English_Mace_Seed",
         seedreq = 2,
@@ -353,7 +353,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "milk_weed_seed",
         seedreq = 2,
@@ -369,7 +369,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "oleander_sage_seed",
         seedreq = 2,
@@ -385,7 +385,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "Oregano_Seed",
         seedreq = 2,
@@ -412,7 +412,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "prairie_poppy_seed",
         seedreq = 2,
@@ -444,7 +444,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "red_sage_seed",
         seedreq = 2,
@@ -476,7 +476,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_carrots_sap_ba_sim", minGrowth = 0 },
             { prop = "crp_carrots_aa_sim", minGrowth = 33 },
-            { prop = "crp_carrots_ba_sim", minGrowth = 66 }
+            { prop = "crp_carrots_ba_sim", minGrowth = 66, offset = 0.0 }
         },
         seedname = "wild_carrot_seed",
         seedreq = 2,
@@ -492,7 +492,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "wild_mint_seed",
         seedreq = 2,
@@ -524,7 +524,7 @@ Config.Seeds = {
         stages = {
             { prop = "crp_ginseng_aa_sim", minGrowth = 0 },
             { prop = "crp_potato_aa_sim", minGrowth = 40 },
-            { prop = "crp_ginseng_ba_sim", minGrowth = 80 }
+            { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "yarrow_seed",
         seedreq = 2,
@@ -543,7 +543,7 @@ Config.Seeds = {
             -- Stage 2: Medium (33-66%)
             { prop = "crp_cornstalks_ca_sim", minGrowth = 33 },
             -- Stage 3: Mature (66-100%)
-            { prop = "crp_cornstalks_ab_sim", minGrowth = 66 }
+            { prop = "crp_cornstalks_ab_sim", minGrowth = 66, offset = 2.5 }
         },
         seedname = "corn_seed",
         seedreq = 2,
@@ -584,7 +584,7 @@ Config.Seeds = {
     ["Potato"] = {
         prop = "crp_potato_aa_sim",
         stages = {
-            { prop = "crp_potato_sap_aa_sim", minGrowth = 0 },
+            { prop = "crp_ginseng_ab_sim", minGrowth = 0, offset = 0.0 },
             { prop = "crp_potato_aa_sim", minGrowth = 50 },
             { prop = "crp_potato_aa_sim", minGrowth = 90 }
         },

@@ -479,29 +479,28 @@ end)
 -- Helper: Get Model based on Growth Stage
 local function GetPlantModel(plantType, growthPercent)
     local seedData = Config.Seeds[plantType]
-    if not seedData then return nil end
+    if not seedData then return nil, nil end
     
     -- Default single prop
     local modelName = seedData.prop
+    local activeStage = nil
     
     -- Multi-stage check
     if seedData.stages then
         for _, stage in ipairs(seedData.stages) do
             if growthPercent >= stage.minGrowth then
                 modelName = stage.prop
+                activeStage = stage
             end
         end
     end
     
-    return GetHashKey(modelName)
+    return GetHashKey(modelName), activeStage
 end
 
 function SpawnPlantProp(id, plant)
-    -- If already rendered, check if model needs update (handled by main loop) or simple return
-    if RenderedPlants[id] then return end
-    
     local growth = CalculateGrowth(plant)
-    local model = GetPlantModel(plant.type, growth)
+    local model, stageData = GetPlantModel(plant.type, growth)
     if not model then return end
 
     RequestModel(model)
@@ -517,8 +516,28 @@ function SpawnPlantProp(id, plant)
     local seedData = Config.Seeds[plant.type]
     local groundZ = GetGroundZ(coords.x, coords.y, coords.z)
     
-    local obj = CreateObject(model, coords.x, coords.y, groundZ - (seedData.offset or 0.0), false, false, false)
+    -- Check for updates to existing prop
+    if RenderedPlants[id] then
+        if plant.currentModel == model then
+             return 
+        else
+             DeleteObject(RenderedPlants[id])
+             RenderedPlants[id] = nil
+        end
+    end
+
+    local obj = CreateObject(model, coords.x, coords.y, groundZ, false, false, false)
     SetEntityAsMissionEntity(obj, true, true)
+    
+    -- Determine offset: Check stage specific offset first, then fall back to global seed offset, then 0.0
+    local finalOffset = seedData.offset or 0.0
+    if stageData and stageData.offset then
+        finalOffset = stageData.offset
+    end
+
+    -- Use explicit groundZ instead of PlaceObjectOnGroundProperly to prevent floating
+    SetEntityCoords(obj, coords.x, coords.y, groundZ - finalOffset, false, false, false, false)
+    
     FreezeEntityPosition(obj, true)
     SetEntityHeading(obj, plant.heading or 0.0)
     SetEntityCollision(obj, true, true)
@@ -540,7 +559,7 @@ function SpawnPlantProp(id, plant)
                 label = "Inspect Crop",
             },
         },
-        distance = 3.0,
+        distance = 7.0,
     })
 end
 
@@ -782,6 +801,44 @@ CreateThread(function()
         },
         distance = 2.0,
     })
+end)
+
+-- Main Render/Update Loop
+CreateThread(function()
+    while true do
+        Wait(2000) -- Check every 2 seconds
+        
+        local pCoords = GetEntityCoords(PlayerPedId())
+        
+        for id, plant in pairs(Plants) do
+            local dist = #(pCoords - vector3(plant.coords.x, plant.coords.y, plant.coords.z))
+            
+            if dist < Config.RenderDistance then
+                -- Check if needs spawning OR updating
+                if not RenderedPlants[id] then
+                    SpawnPlantProp(id, plant)
+                else
+                    -- Check if model has changed (growth)
+                    local growth = CalculateGrowth(plant)
+                    local expectedModel, _ = GetPlantModel(plant.type, growth)
+                    
+                    if expectedModel and plant.currentModel ~= expectedModel then
+                        -- Force update by calling spawn (it now handles delete-replace)
+                        SpawnPlantProp(id, plant)
+                    end
+                end
+            else
+                -- Despawn if too far
+                if RenderedPlants[id] then
+                    if DoesEntityExist(RenderedPlants[id]) then
+                        exports['rsg-target']:RemoveTargetEntity(RenderedPlants[id])
+                        DeleteObject(RenderedPlants[id])
+                    end
+                    RenderedPlants[id] = nil
+                end
+            end
+        end
+    end
 end)
 
 -- Helper for 3D Text (Local definition ensures availability)

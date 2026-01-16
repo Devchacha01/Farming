@@ -290,9 +290,9 @@ RegisterNetEvent('rsg-farming:server:fillBucket', function()
     local Player = RSGCore.Functions.GetPlayer(src)
     if Player then
         if Player.Functions.RemoveItem('bucket', 1) then
-            Player.Functions.AddItem('fullbucket', 1, false, { uses = 6 })
+            Player.Functions.AddItem('fullbucket', 1, nil, { uses = 10 })
             TriggerClientEvent('rsg-inventory:client:ItemBox', src, RSGCore.Shared.Items['fullbucket'], "add")
-            TriggerClientEvent('ox_lib:notify', src, { title = 'Success', description = 'Bucket filled with water (6 uses)', type = 'success' })
+            TriggerClientEvent('ox_lib:notify', src, { title = 'Success', description = 'Bucket filled with water (10 uses)', type = 'success' })
         else
             TriggerClientEvent('ox_lib:notify', src, { title = 'Error', description = 'You need an empty bucket', type = 'error' })
         end
@@ -301,7 +301,7 @@ end)
 
 
 -- Event: Water Plant
-local BUCKET_MAX_USES = 6
+local BUCKET_MAX_USES = 10
 
 RegisterNetEvent('rsg-farming:server:waterPlant', function(plantId)
     local src = source
@@ -314,8 +314,6 @@ RegisterNetEvent('rsg-farming:server:waterPlant', function(plantId)
         local wateringCan = not bucket and Player.Functions.GetItemByName('wateringcan_full')
         
         if bucket or wateringCan then
-            local usedBucket = false
-            local usedCan = false
             
             if bucket then
                 -- Get current uses (default to BUCKET_MAX_USES if new bucket)
@@ -331,15 +329,13 @@ RegisterNetEvent('rsg-farming:server:waterPlant', function(plantId)
                 else
                     -- Update bucket uses
                     Player.Functions.RemoveItem('fullbucket', 1, bucket.slot)
-                    Player.Functions.AddItem('fullbucket', 1, false, { uses = uses })
+                    Player.Functions.AddItem('fullbucket', 1, nil, { uses = uses })
                     TriggerClientEvent('ox_lib:notify', src, { title = 'Info', description = 'Bucket uses remaining: ' .. uses, type = 'inform' })
                 end
-                usedBucket = true
             elseif wateringCan then
                 -- Watering can empties after one use
                 Player.Functions.RemoveItem('wateringcan_full', 1, wateringCan.slot)
                 Player.Functions.AddItem('wateringcan_empty', 1)
-                usedCan = true
             end
             
             -- Update plant water level
