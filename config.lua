@@ -638,7 +638,7 @@ Config.Seeds = {
         timetowater = 10,
         totaltime = 15,
         difficulty = 3000,
-        offset = 0.5,
+        offset = 0.0,
     },
 
     ["Lemon"] = {
@@ -650,7 +650,7 @@ Config.Seeds = {
         timetowater = 10,
         totaltime = 15,
         difficulty = 3000,
-        offset = 0.5,
+        offset = 0.0,
     },
     ["Barley"] = {
         prop = "crp_wheat_dry_long_aa_sim",
@@ -666,7 +666,7 @@ Config.Seeds = {
         timetowater = 10,
         totaltime = 15,
         difficulty = 3000,
-        offset = 0.5,
+        offset = 0.0,
     },
     ["Banana"] = {
         prop = "p_tree_banana_01_lg",
@@ -677,7 +677,7 @@ Config.Seeds = {
         timetowater = 10,
         totaltime = 15,
         difficulty = 3000,
-        offset = 0.5,
+        offset = 0.0,
     },
     ["Tomato"] = {
         prop = "crp_tomatoes_har_aa_sim", -- Default
