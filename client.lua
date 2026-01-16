@@ -724,7 +724,7 @@ RegisterNetEvent('rsg-farming:client:waterAction', function(action)
     local ped = PlayerPedId()
     
     if action == 'fillBucket' then
-        local hasBucket = exports['rsg-inventory']:HasItem('bucket', 1) 
+        local hasBucket = exports['rsg-inventory']:HasItem('emptybucket', 1) 
         if not hasBucket then
              exports.ox_lib:notify({ title='Error', description='You need an empty bucket!', type='error' })
              return

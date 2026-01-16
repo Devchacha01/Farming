@@ -289,7 +289,7 @@ RegisterNetEvent('rsg-farming:server:fillBucket', function()
     local src = source
     local Player = RSGCore.Functions.GetPlayer(src)
     if Player then
-        if Player.Functions.RemoveItem('bucket', 1) then
+        if Player.Functions.RemoveItem('emptybucket', 1) then
             Player.Functions.AddItem('fullbucket', 1, nil, { uses = 10 })
             TriggerClientEvent('rsg-inventory:client:ItemBox', src, RSGCore.Shared.Items['fullbucket'], "add")
             TriggerClientEvent('ox_lib:notify', src, { title = 'Success', description = 'Bucket filled with water (10 uses)', type = 'success' })
@@ -323,8 +323,8 @@ RegisterNetEvent('rsg-farming:server:waterPlant', function(plantId)
                 if uses <= 0 then
                     -- Bucket is empty, replace with empty bucket
                     Player.Functions.RemoveItem('fullbucket', 1, bucket.slot)
-                    Player.Functions.AddItem('bucket', 1)
-                    TriggerClientEvent('rsg-inventory:client:ItemBox', src, RSGCore.Shared.Items['bucket'], "add")
+                    Player.Functions.AddItem('emptybucket', 1)
+                    TriggerClientEvent('rsg-inventory:client:ItemBox', src, RSGCore.Shared.Items['emptybucket'], "add")
                     TriggerClientEvent('ox_lib:notify', src, { title = 'Info', description = 'Bucket is now empty!', type = 'inform' })
                 else
                     -- Update bucket uses
