@@ -864,15 +864,24 @@ CreateThread(function()
             local ped = PlayerPedId()
             
             if IsEntityInWater(ped) and not IsPedInAnyVehicle(ped, true) then
-                sleep = 0
-                
-                if not textShown then
-                    lib.showTextUI('[ALT] Fill Bucket', { position = "right-center" })
-                    textShown = true
-                end
-                
-                if IsControlJustPressed(0, 0x8AAA0AD4) then -- LEFT ALT
-                    TriggerEvent('rsg-farming:client:waterAction', 'fillBucket')
+                local hasBucket = exports['rsg-inventory']:HasItem(Config.Items.emptybucket, 1)
+
+                if hasBucket then
+                    sleep = 0
+                    
+                    if not textShown then
+                        lib.showTextUI('[ALT] Fill Bucket', { position = "right-center" })
+                        textShown = true
+                    end
+                    
+                    if IsControlJustPressed(0, 0x8AAA0AD4) then -- LEFT ALT
+                        TriggerEvent('rsg-farming:client:waterAction', 'fillBucket')
+                    end
+                else
+                    if textShown then
+                        lib.hideTextUI()
+                        textShown = false
+                    end
                 end
             else
                 if textShown then

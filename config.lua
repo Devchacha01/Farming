@@ -132,7 +132,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 90, offset = 0.0 }
         },
         seedname = "alaskan_ginseng_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "alaskan_ginseng",
         rewardcount = 6,
         timetowater = 10,
@@ -164,7 +164,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 90, offset = 0.0 }
         },
         seedname = "american_ginseng_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "american_ginseng",
         rewardcount = 6,
         timetowater = 10,
@@ -180,7 +180,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "hop_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "hop",
         rewardcount = 6,
         timetowater = 10,
@@ -196,7 +196,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "pepper_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "pimenta",
         rewardcount = 6,
         timetowater = 10,
@@ -212,7 +212,7 @@ Config.Seeds = {
             { prop = "crp_berry_har_aa_sim", minGrowth = 85 }
         },
         seedname = "black_currant_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "black_currant",
         rewardcount = 6,
         timetowater = 10,
@@ -228,7 +228,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "blood_flower_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "Blood_Flower",
         rewardcount = 6,
         timetowater = 10,
@@ -244,7 +244,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "choc_daisy_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "Choc_Daisy",
         rewardcount = 6,
         timetowater = 10,
@@ -260,7 +260,7 @@ Config.Seeds = {
             { prop = "crp_berry_har_aa_sim", minGrowth = 66 }
         },
         seedname = "coffee_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "coffeebeans",
         rewardcount = 6,
         timetowater = 10,
@@ -276,7 +276,7 @@ Config.Seeds = {
             { prop = "crp_berry_har_aa_sim", minGrowth = 85 }
         },
         seedname = "creekplum_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "creekplum",
         rewardcount = 6,
         timetowater = 10,
@@ -292,7 +292,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "Creeking_Thyme_Seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "Creeking_Thyme",
         rewardcount = 6,
         timetowater = 10,
@@ -308,7 +308,7 @@ Config.Seeds = {
             { prop = "crp_potato_aa_sim", minGrowth = 90 }
         },
         seedname = "crows_garlic_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "crows_garlic",
         rewardcount = 6,
         timetowater = 10,
@@ -324,7 +324,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "English_Mace_Seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "English_Mace",
         rewardcount = 6,
         timetowater = 10,
@@ -340,7 +340,7 @@ Config.Seeds = {
             { prop = "crp_tobaccoplant_bc_sim", minGrowth = 66 }
         },
         seedname = "tobacco_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "tobacco",
         rewardcount = 6,
         timetowater = 10,
@@ -356,7 +356,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "milk_weed_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "milk_weed",
         rewardcount = 6,
         timetowater = 10,
@@ -372,7 +372,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "oleander_sage_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "oleander_sage",
         rewardcount = 6,
         timetowater = 10,
@@ -388,7 +388,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "Oregano_Seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "Oregano",
         rewardcount = 6,
         timetowater = 10,
@@ -399,7 +399,7 @@ Config.Seeds = {
     ["Parasol Mushroom"] = {
         prop = "s_inv_parasol",
         seedname = "parasol_mushroom_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "parasol_mushroom",
         rewardcount = 6,
         timetowater = 10,
@@ -415,7 +415,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "prairie_poppy_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "prairie_poppy",
         rewardcount = 6,
         timetowater = 10,
@@ -431,7 +431,7 @@ Config.Seeds = {
             { prop = "crp_berry_har_aa_sim", minGrowth = 85 }
         },
         seedname = "red_raspberry_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "red_raspberry",
         rewardcount = 6,
         timetowater = 10,
@@ -447,7 +447,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "red_sage_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "red_sage",
         rewardcount = 6,
         timetowater = 10,
@@ -463,7 +463,7 @@ Config.Seeds = {
             { prop = "crp_tobaccoplant_bc_sim", minGrowth = 66 }
         },
         seedname = "teaseeds",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "tealeaf",
         rewardcount = 6,
         timetowater = 10,
@@ -479,7 +479,7 @@ Config.Seeds = {
             { prop = "crp_carrots_ba_sim", minGrowth = 66, offset = 0.0 }
         },
         seedname = "wild_carrot_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "wild_carrot",
         rewardcount = 6,
         timetowater = 10,
@@ -495,7 +495,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "wild_mint_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "wild_mint",
         rewardcount = 6,
         timetowater = 10,
@@ -511,7 +511,7 @@ Config.Seeds = {
             { prop = "crp_berry_har_aa_sim", minGrowth = 85 }
         },
         seedname = "wintergreen_berry_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "wintergreen_berry",
         rewardcount = 6,
         timetowater = 10,
@@ -527,7 +527,7 @@ Config.Seeds = {
             { prop = "crp_ginseng_ba_sim", minGrowth = 80, offset = 0.0 }
         },
         seedname = "yarrow_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "yarrow",
         rewardcount = 6,
         timetowater = 10,
@@ -546,7 +546,7 @@ Config.Seeds = {
             { prop = "crp_cornstalks_ab_sim", minGrowth = 66, offset = 2.5 }
         },
         seedname = "corn_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "Corn",
         rewardcount = 6,
         timetowater = 10,
@@ -557,7 +557,7 @@ Config.Seeds = {
     ["Apple"] = {
         prop = "p_tree_orange_01",
         seedname = "apple_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "Apple",
         rewardcount = 6,
         timetowater = 10,
@@ -573,7 +573,7 @@ Config.Seeds = {
             { prop = "crp_sugarcane_ad_sim", minGrowth = 90 }  -- Mature/Harvest
         },
         seedname = "sugarcaneseed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "cana",
         rewardcount = 6,
         timetowater = 10,
@@ -589,7 +589,7 @@ Config.Seeds = {
             { prop = "crp_potato_aa_sim", minGrowth = 90 }
         },
         seedname = "potato_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "Potato",
         rewardcount = 6,
         timetowater = 10,
@@ -600,7 +600,7 @@ Config.Seeds = {
     ["Peach"] = {
         prop = "p_tree_orange_01",
         seedname = "peachseeds",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "consumable_peach",
         rewardcount = 6,
         timetowater = 10,
@@ -616,7 +616,7 @@ Config.Seeds = {
             { prop = "crp_berry_har_aa_sim", minGrowth = 85 }
         },
         seedname = "cherry_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "cherry",
         rewardcount = 6,
         timetowater = 10,
@@ -632,7 +632,7 @@ Config.Seeds = {
             { prop = "crp_wheat_dry_long_aa_sim", minGrowth = 90 }  -- Harvest Dry
         },
         seedname = "wheat_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "wheat",
         rewardcount = 6,
         timetowater = 10,
@@ -644,7 +644,7 @@ Config.Seeds = {
     ["Lemon"] = {
         prop = "p_tree_orange_01",
         seedname = "lemon_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "lemon",
         rewardcount = 6,
         timetowater = 10,
@@ -660,7 +660,7 @@ Config.Seeds = {
             { prop = "crp_wheat_dry_long_aa_sim", minGrowth = 90 }
         },
         seedname = "barley_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "barley",
         rewardcount = 6,
         timetowater = 10,
@@ -671,7 +671,7 @@ Config.Seeds = {
     ["Banana"] = {
         prop = "p_tree_banana_01_lg",
         seedname = "banana_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "banana",
         rewardcount = 6,
         timetowater = 10,
@@ -687,7 +687,7 @@ Config.Seeds = {
             { prop = "crp_tomatoes_aa_sim", minGrowth = 90 }  -- Ripe
         },
         seedname = "tomato_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "tomato",
         rewardcount = 4,
         timetowater = 10,
@@ -703,7 +703,7 @@ Config.Seeds = {
             { prop = "crp_lettuce_aa_sim", minGrowth = 90 }  -- Mature
         },
         seedname = "lettuce_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "lettuce",
         rewardcount = 4,
         timetowater = 10,
@@ -719,7 +719,7 @@ Config.Seeds = {
             { prop = "crp_broccoli_aa_sim", minGrowth = 80 }
         },
         seedname = "broccoli_seed",
-        seedreq = 2,
+        seedreq = 1,
         rewarditem = "broccoli",
         rewardcount = 4,
         timetowater = 10,

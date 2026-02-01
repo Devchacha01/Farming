@@ -1,6 +1,6 @@
 local items = {
 	-- Tools
-	['emptybucket'] 			= {['name'] = 'emptybucket', 			['label'] = 'Empty Bucket', 	    ['weight'] = 100, 		['type'] = 'item', 		['image'] = 'bucket.png', 			['unique'] = false, 	['useable'] = false, 	['shouldClose'] = false,   ['combinable'] = nil,   ['description'] = 'A bucket for water'},
+	['emptybucket'] 			= {['name'] = 'emptybucket', 			['label'] = 'Empty Bucket', 	    ['weight'] = 100, 		['type'] = 'item', 		['image'] = 'bucket.png', 			['unique'] = false, 	['useable'] = false, 	['shouldClose'] = false,   ['combinable'] = nil,   ['description'] = 'An empty bucket.'},
 	['fullbucket'] 				= {['name'] = 'fullbucket', 			['label'] = 'Full Bucket', 	    	['weight'] = 500, 		['type'] = 'item', 		['image'] = 'bucket_full.png', 		['unique'] = true, 	['useable'] = true, 	['shouldClose'] = false,   ['combinable'] = nil,   ['description'] = 'A bucket full of water'},
 	['wateringcan'] 			= {['name'] = 'wateringcan', 			['label'] = 'Watering Can', 	    ['weight'] = 500, 		['type'] = 'item', 		['image'] = 'wateringcan.png', 		['unique'] = false, 	['useable'] = true, 	['shouldClose'] = false,   ['combinable'] = nil,   ['description'] = 'A watering can'},
 	['wateringcan_empty'] 		= {['name'] = 'wateringcan_empty', 		['label'] = 'Empty Watering Can', 	['weight'] = 100, 		['type'] = 'item', 		['image'] = 'wateringcan_empty.png', ['unique'] = true, 	['useable'] = false, 	['shouldClose'] = false,   ['combinable'] = nil,   ['description'] = 'An empty watering can'},
